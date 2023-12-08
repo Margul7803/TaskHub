@@ -1,14 +1,14 @@
 // index.js
 const fastify = require('fastify')({ logger: true });
 
-const mongo = process.env.MONGO_URL || "mongodb://localhost:27018/tasks"
+const mongo = process.env.MONGO_URL || "mongodb://mongodb:27017/tasks"
 fastify.register(require('@fastify/mongodb'), {
     forceClose: true,
     url: mongo
 })
 
-const port = process.env.PORT
-
+const port = "3000";
+const host = "0.0.0.0";
 // Routes CRUD pour les tâches
 fastify.post('/tasks', async (request, reply) => {
   const { nom, description, statut, dateCreation } = request.body;
@@ -23,7 +23,7 @@ fastify.post('/tasks', async (request, reply) => {
     dateCreation,
   });
 
-  reply.code(201).send(result.ops[0]);
+  reply.code(201).send(result);
 });
 
 fastify.get('/tasks', async (request, reply) => {
@@ -41,7 +41,7 @@ fastify.get('/tasks/:id', async (request, reply) => {
   const db = fastify.mongo.db;
   const collection = db.collection('tasks');
 
-  const task = await collection.findOne({ _id: new MongoClient.ObjectID(taskId) });
+  const task = await collection.findOne({ _id: new fastify.mongo.ObjectId(taskId) });
 
   if (!task) {
     reply.code(404).send({ message: 'Tâche non trouvée' });
@@ -59,7 +59,7 @@ fastify.put('/tasks/:id', async (request, reply) => {
   const collection = db.collection('tasks');
 
   const result = await collection.findOneAndUpdate(
-    { _id: new MongoClient.ObjectID(taskId) },
+    { _id: new fastify.mongo.ObjectId(taskId)},
     { $set: { nom, description, statut, dateCreation } },
     { returnDocument: 'after' }
   );
@@ -78,7 +78,7 @@ fastify.delete('/tasks/:id', async (request, reply) => {
   const db = fastify.mongo.db;
   const collection = db.collection('tasks');
 
-  const result = await collection.findOneAndDelete({ _id: new MongoClient.ObjectID(taskId) });
+  const result = await collection.findOneAndDelete({ _id: new fastify.mongo.ObjectId(taskId) });
 
   if (!result.value) {
     reply.code(404).send({ message: 'Tâche non trouvée' });
@@ -88,7 +88,7 @@ fastify.delete('/tasks/:id', async (request, reply) => {
   reply.send({ message: 'Tâche supprimée avec succès' });
 });
 
-fastify.listen({ port }, (err) => {
+fastify.listen({ port, host }, (err) => {
     if (err) {
       fastify.log.error(err)
       process.exit(1)

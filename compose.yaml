@@ -1,16 +1,15 @@
-
 version: '3'
 services:
   fastify:
     build:
-      context: ./Back/
+      context: ./tp1/
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
     depends_on:
-      - mongo
+      - mongodb
     environment:
-      - MONGODB_URI=mongodb://mongo:27017/TaskHubDB
+      - MONGODB_URI=mongodb://localhost:27017/tasks
 
   mongodb:
     image: mongo:latest
