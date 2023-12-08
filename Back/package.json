@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@fastify/mongodb": "^8.0.0",
-    "fastify": "^4.24.3",
-    "fs": "^0.0.1-security"
-  }
-}
