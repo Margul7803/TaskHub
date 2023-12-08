@@ -12,6 +12,6 @@ services:
       - MONGODB_URI=mongodb://localhost:27017/tasks
 
   mongodb:
-    image: mongo:latest
+    image: mongo:4.4.27-rc0
     ports:
       - 27017:27017
